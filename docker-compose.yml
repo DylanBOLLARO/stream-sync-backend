@@ -1,0 +1,26 @@
+services:
+  postgres:
+    container_name: postgres_stream_sync
+    image: postgres:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 25432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  nestjs:
+    build:
+      context: .
+    container_name: nestjs_stream_sync
+    restart: unless-stopped
+    ports:
+      - 25000:5000
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
