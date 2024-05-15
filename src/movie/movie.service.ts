@@ -7,7 +7,6 @@ export class MovieService {
   constructor(private prisma: PrismaService) {}
 
   async create(createMovieDto: CreateMovieDto) {
-    console.log(createMovieDto);
     return await this.prisma.movie.create({ data: createMovieDto });
   }
 

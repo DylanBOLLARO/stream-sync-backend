@@ -17,7 +17,6 @@ export class CreateMovieValidationPipe implements PipeTransform {
     delete value.image_urls;
     delete value.url;
     delete value.images;
-    console.log(value);
     return value;
   }
 }
