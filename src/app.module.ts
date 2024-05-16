@@ -11,7 +11,7 @@ import { VideoModule } from './video/video.module';
 @Module({
 	imports: [
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '..', 'images'),
+			rootPath: join(__dirname, './../../', 'images'),
 			exclude: ['/api/v1/(.*)'],
 		}),
 		ConfigModule.forRoot({ isGlobal: true }),
