@@ -2,8 +2,6 @@
 /dist
 /node_modules
 /build
-images
-/videos
 
 # Logs
 logs
@@ -57,4 +55,8 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-assets/
+assets/*
+!assets/.gitignore
+
+images/*
+!images/.gitignore
