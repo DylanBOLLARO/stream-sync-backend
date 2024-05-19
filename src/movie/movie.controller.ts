@@ -18,25 +18,28 @@ export class MovieController {
 	constructor(private readonly movieService: MovieService) {}
 
 	private createSearch(params: any) {
-		const { select, searchString } = params;
+		const { searchString, select } = params;
 
-		let where: any = {};
+		const where: any = {};
 
-		if (select) {
-			where = {
-				id: {
-					in: select,
-				},
-			};
+		if (select?.length > 0) {
+			where.id = { in: select };
 		}
 
 		if (searchString) {
-			where = {
-				name: { contains: searchString, mode: 'insensitive' },
-			};
+			where.title = { contains: searchString, mode: 'insensitive' };
 		}
 
 		return where;
+	}
+
+	@Get('/favorite')
+	@UsePipes(new GetMoviePipe())
+	async favorite(@Query('select') select?: Array<string>) {
+		if (!select || select?.length == 0) return;
+		return await this.movieService.getMovies({
+			where: this.createSearch({ select }),
+		});
 	}
 
 	@Post()
@@ -57,25 +60,46 @@ export class MovieController {
 		)[0];
 	}
 
-	@Get()
 	@Get('filter/:searchString')
 	@UsePipes(new GetMoviePipe())
-	async getMovies(
+	async getFilteredMovies(
 		@Param('searchString') searchString: string,
 		@Query('take') take?: number,
-		@Query('skip') skip?: number,
+		@Query('page') page?: number,
 		@Query('cursor') cursor?: string,
-		@Query('orderBy') orderBy?: 'asc' | 'desc',
-		@Query('select') select?: Array<number>,
+		@Query('orderBy') orderBy?: string,
+		// @Query('select') select?: number[],
 	) {
-		return this.movieService.getMovies({
+		const skip = (page ?? 0) * (take ?? 0);
+
+		return await this.movieService.getMovies({
 			where: this.createSearch({
-				select,
 				searchString,
 			}),
 			skip,
 			cursor,
-			orderBy,
+			orderBy: { audience_rating: orderBy },
+			take,
+		});
+	}
+
+	@Get()
+	@UsePipes(new GetMoviePipe())
+	async getMovies(
+		@Query('take') take?: number,
+		@Query('page') page?: number,
+		@Query('cursor') cursor?: string,
+		@Query('orderBy') orderBy?: string,
+		@Query('select') select?: number[],
+	) {
+		const skip = (page ?? 0) * (take ?? 0);
+		return await this.movieService.getMovies({
+			where: this.createSearch({
+				select,
+			}),
+			skip,
+			cursor,
+			orderBy: { audience_rating: orderBy },
 			take,
 		});
 	}
