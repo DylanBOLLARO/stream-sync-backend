@@ -12,7 +12,7 @@ import { VideoModule } from './video/video.module';
 	imports: [
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, './../../', 'images'),
-			exclude: ['/api/v1/(.*)'],
+			serveRoot: '/v1',
 		}),
 		ConfigModule.forRoot({ isGlobal: true }),
 		MovieModule,
